@@ -1,0 +1,10 @@
+.idea
+
+# Airflow
+
+/data
+./airflow/config/airflow.cfg
+./airflow/logs/
+
+# Diagram
+/.$Flow data.drawio.bkp

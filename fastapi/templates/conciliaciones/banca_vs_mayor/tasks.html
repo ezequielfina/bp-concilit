@@ -1,0 +1,88 @@
+{% extends "/conciliaciones/banca_vs_mayor/sub_module.html" %}
+
+{% block submodule_content %}
+
+<div class="max-w-5xl mx-auto py-10 px-4">
+
+    <div class="bg-white border border-gray-200 rounded-xl shadow-sm overflow-hidden divide-y divide-gray-200">
+
+        <a href="/conciliaciones/banca-vs-mayor/saldos-bancarios" class="group flex items-center justify-between p-6 hover:bg-blue-50 transition-all">
+            <div class="flex items-center space-x-4">
+                <div class="p-3 bg-blue-100 text-blue-600 rounded-lg group-hover:bg-blue-600 group-hover:text-white transition-colors">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 10h18M7 15h1m4 0h1m-7 4h12a3 3 0 003-3V8a3 3 0 00-3-3H6a3 3 0 00-3 3v8a3 3 0 003 3z" />
+                    </svg>
+                </div>
+                <div>
+                    <h3 class="text-lg font-semibold text-gray-900 group-hover:text-blue-700">Saldos Bancarios</h3>
+                    <p class="text-sm text-gray-500">Cargar nuevos datos y consultar previos.</p>
+                </div>
+            </div>
+            <div class="text-gray-300 group-hover:text-blue-500 transition-colors">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" />
+                </svg>
+            </div>
+        </a>
+
+        <a href="/conciliaciones/banca-vs-mayor/mayor" class="group flex items-center justify-between p-6 hover:bg-amber-50 transition-all">
+            <div class="flex items-center space-x-4">
+                <div class="p-3 bg-amber-100 text-amber-600 rounded-lg group-hover:bg-amber-600 group-hover:text-white transition-colors">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+                    </svg>
+                </div>
+                <div>
+                    <h3 class="text-lg font-semibold text-gray-900 group-hover:text-amber-700">Cargar y Consultar Mayores</h3>
+                    <p class="text-sm text-gray-500">Subir el archivo del Libro Mayor contable y consultar estados.</p>
+                </div>
+            </div>
+            <div class="text-gray-300 group-hover:text-amber-500 transition-colors">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" />
+                </svg>
+            </div>
+        </a>
+
+        <a href="/conciliaciones/banca-vs-mayor/look-partidas" class="group flex items-center justify-between p-6 hover:bg-rose-50 transition-all">
+            <div class="flex items-center space-x-4">
+                <div class="p-3 bg-rose-100 text-rose-600 rounded-lg group-hover:bg-rose-600 group-hover:text-white transition-colors">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+                    </svg>
+                </div>
+                <div>
+                    <h3 class="text-lg font-semibold text-gray-900 group-hover:text-rose-700">Buscar y Modificar Partidas</h3>
+                    <p class="text-sm text-gray-500">Localizar movimientos específicos por importe, fecha o referencia.</p>
+                </div>
+            </div>
+            <div class="text-gray-300 group-hover:text-rose-500 transition-colors">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" />
+                </svg>
+            </div>
+        </a>
+
+        <a href="/conciliaciones/banca-vs-mayor/reporte" class="group flex items-center justify-between p-6 hover:bg-emerald-50 transition-all">
+            <div class="flex items-center space-x-4">
+                <div class="p-3 bg-emerald-100 text-emerald-600 rounded-lg group-hover:bg-emerald-600 group-hover:text-white transition-colors">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+                    </svg>
+                </div>
+                <div>
+                    <h3 class="text-lg font-semibold text-gray-900 group-hover:text-emerald-700">Descargar Reporte</h3>
+                    <p class="text-sm text-gray-500">Exportar reporte a Excel.</p>
+                </div>
+            </div>
+            <div class="text-gray-300 group-hover:text-emerald-500 transition-colors">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" />
+                </svg>
+            </div>
+        </a>
+
+    </div>
+</div>
+
+{% endblock %}

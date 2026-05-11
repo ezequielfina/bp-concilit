@@ -1,0 +1,4 @@
+logs
+.env
+dags/scripts/utils/.env
+

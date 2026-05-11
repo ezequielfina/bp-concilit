@@ -1,0 +1,227 @@
+{% extends "conciliaciones/banca_vs_mayor/sub_module.html" %}
+
+{% block submodule_content %}
+
+<div class="max-w-4xl mx-auto mt-10 px-4">
+    <section class="bg-white p-8 rounded-2xl shadow-sm border border-gray-100">
+
+        <div class="flex items-center space-x-3 mb-8 border-b pb-4">
+            <div class="p-2 bg-emerald-100 text-emerald-600 rounded-lg">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 17v-2m3 2v-4m3 4v-6m2 10H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+                </svg>
+            </div>
+            <div>
+                <h2 class="text-xl font-bold text-gray-800">Generar Reporte de Conciliación</h2>
+                <p class="text-sm text-gray-500">Seleccioná los filtros para procesar el reporte.</p>
+            </div>
+        </div>
+
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
+            <div class="flex flex-col">
+                <label class="text-[10px] font-bold text-gray-400 uppercase mb-2">Empresa</label>
+                <select id="select-empresa" class="border border-gray-200 rounded-lg p-3 text-sm focus:ring-2 focus:ring-emerald-500 outline-none bg-gray-50">
+                    <option value="" disabled selected>Seleccioná empresa</option>
+                    {% for empresa in empresas %}
+                        <option value="{{ empresa.id }}">{{ empresa.razon_social }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+
+            <div class="flex flex-col">
+                <label class="text-[10px] font-bold text-gray-400 uppercase mb-2">Cuenta</label>
+                <select id="select-cuenta" class="border border-gray-200 rounded-lg p-3 text-sm focus:ring-2 focus:ring-emerald-500 outline-none bg-gray-50">
+                    <option value="" disabled selected>Esperando empresa...</option>
+                </select>
+            </div>
+
+            <div class="flex flex-col">
+                <label class="text-[10px] font-bold text-gray-400 uppercase mb-2">Saldo (Corte)</label>
+                <select id="select-saldo" class="border border-gray-200 rounded-lg p-3 text-sm focus:ring-2 focus:ring-emerald-500 outline-none bg-gray-50">
+                    <option value="" disabled selected>Esperando cuenta...</option>
+                </select>
+            </div>
+        </div>
+
+        <div id="detalle-saldo" class="hidden bg-gray-50 rounded-xl p-6 border border-gray-100 mb-8">
+            <div class="flex justify-between items-start">
+                <div class="grid grid-cols-2 gap-8">
+                    <div>
+                        <p class="text-[10px] font-bold text-gray-400 uppercase">Saldo ARS</p>
+                        <p id="det-ars" class="text-lg font-bold text-gray-700">$ 0.00</p>
+                    </div>
+                    <div>
+                        <p class="text-[10px] font-bold text-gray-400 uppercase">Saldo USD</p>
+                        <p id="det-usd" class="text-lg font-bold text-gray-700">u$s 0.00</p>
+                    </div>
+                </div>
+                <div class="text-right">
+                    <p class="text-[10px] font-bold text-gray-400 uppercase mb-1">Estado Reporte</p>
+                    <span id="det-status" class="px-3 py-1 rounded-full text-[10px] font-bold uppercase bg-gray-200 text-gray-600">---</span>
+                </div>
+            </div>
+        </div>
+
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <button id="btn-construir" disabled class="flex items-center justify-center space-x-2 bg-emerald-600 text-white py-3 rounded-xl font-bold hover:bg-emerald-700 disabled:opacity-50 disabled:cursor-not-allowed transition-all duration-300 shadow-lg shadow-emerald-100">
+                <span id="btn-text">Construir Reporte</span>
+            </button>
+
+            <div class="flex space-x-2">
+                <button id="btn-refresh" disabled class="p-3 bg-gray-100 text-gray-600 rounded-xl hover:bg-gray-200 transition disabled:opacity-30">
+                    <svg xmlns="http://www.w3.org/2000/svg" id="icon-refresh" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
+                    </svg>
+                </button>
+                <button id="btn-descargar" class="hidden flex-1 flex items-center justify-center space-x-2 bg-blue-600 text-white py-3 rounded-xl font-bold hover:bg-blue-700 transition shadow-lg shadow-blue-100">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 17v-2m3 2v-4m3 4v-6m2 10H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+                    </svg>
+                    <span>Descargar Excel</span>
+                </button>
+            </div>
+        </div>
+
+    </section>
+</div>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const selectEmpresa = document.getElementById('select-empresa');
+    const selectCuenta = document.getElementById('select-cuenta');
+    const selectSaldo = document.getElementById('select-saldo');
+    const detalleBox = document.getElementById('detalle-saldo');
+    const detArs = document.getElementById('det-ars');
+    const detUsd = document.getElementById('det-usd');
+    const detStatus = document.getElementById('det-status');
+    const btnConstruir = document.getElementById('btn-construir');
+    const btnRefresh = document.getElementById('btn-refresh');
+    const btnDescargar = document.getElementById('btn-descargar');
+    const iconRefresh = document.getElementById('icon-refresh');
+
+    let saldosActuales = [];
+
+    const fmtMoneda = (val, curr) => new Intl.NumberFormat('es-AR', { style: 'currency', currency: curr }).format(val);
+
+    // Lógica de colores para estados (Reconoce "construcción" con tilde o sin tilde)
+    const updateBadgeStatus = (status) => {
+        detStatus.className = "px-3 py-1 rounded-full text-[10px] font-bold uppercase transition-all ";
+        const s = status.toLowerCase();
+
+        if (s.includes('exitosa') || s.includes('exito')) {
+            detStatus.classList.add('bg-green-100', 'text-green-600');
+        } else if (s.includes('error') || s.includes('falló')) {
+            detStatus.classList.add('bg-red-100', 'text-red-600');
+        } else if (s.includes('proceso') || s.includes('constru')) {
+            detStatus.classList.add('bg-blue-100', 'text-blue-600');
+        } else {
+            detStatus.classList.add('bg-gray-200', 'text-gray-600');
+        }
+    };
+
+    const checkDownloadAvailability = (status) => {
+        // Mostramos el botón de Excel solo si el proceso terminó bien
+        if (status.toLowerCase().includes('exitosa')) {
+            btnDescargar.classList.remove('hidden');
+        } else {
+            btnDescargar.classList.add('hidden');
+        }
+    };
+
+    // Cascada de Selects
+    selectEmpresa.addEventListener('change', async (e) => {
+        const res = await fetch(`/api_v1/cuentas/?id_empresa=${e.target.value}`);
+        const data = await res.json();
+        selectCuenta.innerHTML = '<option value="" disabled selected>Seleccioná cuenta</option>';
+        data.forEach(c => {
+            const opt = document.createElement('option');
+            opt.value = c.id; opt.textContent = c.nombre;
+            selectCuenta.appendChild(opt);
+        });
+        detalleBox.classList.add('hidden');
+    });
+
+    selectCuenta.addEventListener('change', async (e) => {
+        const res = await fetch(`/api_v1/saldos_bancarios/cuenta/${e.target.value}`);
+        saldosActuales = await res.json();
+        selectSaldo.innerHTML = '<option value="" disabled selected>Seleccioná fecha de corte</option>';
+        saldosActuales.forEach(s => {
+            const opt = document.createElement('option');
+            opt.value = s.id;
+            opt.textContent = `${new Date(s.fecha).toLocaleDateString('es-AR')} | ${fmtMoneda(s.saldo_ars, 'ARS')} | ${fmtMoneda(s.saldo_usd, 'USD')}`;
+            selectSaldo.appendChild(opt);
+        });
+        detalleBox.classList.add('hidden');
+    });
+
+    selectSaldo.addEventListener('change', (e) => {
+        const saldo = saldosActuales.find(s => s.id === e.target.value);
+        if (saldo) {
+            detArs.innerText = fmtMoneda(saldo.saldo_ars, 'ARS');
+            detUsd.innerText = fmtMoneda(saldo.saldo_usd, 'USD');
+            detStatus.innerText = saldo.status_reporte;
+            updateBadgeStatus(saldo.status_reporte);
+            checkDownloadAvailability(saldo.status_reporte);
+            detalleBox.classList.remove('hidden');
+            btnConstruir.disabled = false;
+            btnRefresh.disabled = false;
+        }
+    });
+
+    // Acción: Construir Reporte con Feedback de UI
+    btnConstruir.addEventListener('click', async () => {
+        const idSaldo = selectSaldo.value;
+        const originalContent = btnConstruir.innerHTML;
+
+        btnConstruir.disabled = true;
+        btnConstruir.innerHTML = `
+            <svg class="animate-spin h-5 w-5 mr-2 text-white" viewBox="0 0 24 24">
+                <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4" fill="none"></circle>
+                <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+            </svg>
+            <span>Procesando...</span>
+        `;
+
+        try {
+            const res = await fetch(`/api_v1/reporte/${idSaldo}`, { method: 'POST' });
+            if (res.ok) {
+                btnConstruir.classList.replace('bg-emerald-600', 'bg-green-600');
+                btnConstruir.innerHTML = '<span>¡Construcción Iniciada!</span>';
+                setTimeout(() => {
+                    btnConstruir.classList.replace('bg-green-600', 'bg-emerald-600');
+                    btnConstruir.innerHTML = originalContent;
+                    btnConstruir.disabled = false;
+                    refreshData();
+                }, 2000);
+            }
+        } catch (err) {
+            btnConstruir.innerHTML = '<span>Error</span>';
+            setTimeout(() => {
+                btnConstruir.innerHTML = originalContent;
+                btnConstruir.disabled = false;
+            }, 2000);
+        }
+    });
+
+    async function refreshData() {
+        const idSaldo = selectSaldo.value;
+        if (!idSaldo) return;
+        iconRefresh.classList.add('animate-spin');
+        try {
+            const res = await fetch(`/api_v1/saldos_bancarios/${idSaldo}`);
+            const saldo = await res.json();
+            detStatus.innerText = saldo.status_reporte;
+            updateBadgeStatus(saldo.status_reporte);
+            checkDownloadAvailability(saldo.status_reporte);
+        } catch (e) { console.error(e); }
+        finally { setTimeout(() => iconRefresh.classList.remove('animate-spin'), 600); }
+    }
+    btnRefresh.addEventListener('click', refreshData);
+
+    btnDescargar.addEventListener('click', () => {
+        window.location.href = `/api_v1/reporte/${selectSaldo.value}`;
+    });
+});
+</script>
+
+{% endblock %}

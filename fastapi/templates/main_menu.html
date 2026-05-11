@@ -1,0 +1,48 @@
+{% extends "index.html" %}
+
+{% block content %}
+
+<div class="max-w-7xl mx-auto py-10 px-4 sm:px-6 lg:px-8">
+    <header class="mb-10">
+        <h1 class="text-3xl font-bold text-gray-900">Panel Principal</h1>
+        <p class="mt-2 text-sm text-gray-600">Selecciona un módulo para comenzar a trabajar.</p>
+    </header>
+
+    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+
+        <a href="/conciliaciones" class="group block p-6 bg-white border border-gray-200 rounded-xl shadow-sm hover:shadow-md hover:border-blue-500 transition-all duration-200">
+            <div class="flex items-center justify-between mb-4">
+                <div class="p-3 bg-blue-50 text-blue-600 rounded-lg group-hover:bg-blue-600 group-hover:text-white transition-colors">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7h12m0 0l-4-4m4 4l-4 4m0 6H4m0 0l4 4m-4-4l4-4" />
+                    </svg>
+                </div>
+                <span class="text-xs font-medium text-green-600 bg-green-100 px-2 py-1 rounded-full">Activo</span>
+            </div>
+            <h3 class="text-xl font-semibold text-gray-900">Conciliaciones</h3>
+            <p class="mt-2 text-gray-500 text-sm">Cruce de extractos bancarios, mayores contables y validación de comprobantes.</p>
+            <div class="mt-4 flex items-center text-sm font-medium text-blue-600">
+                Entrar al módulo
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 ml-1" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" />
+                </svg>
+            </div>
+        </a>
+
+        <div class="block p-6 bg-gray-50 border border-gray-100 rounded-xl opacity-75 cursor-not-allowed">
+            <div class="flex items-center justify-between mb-4">
+                <div class="p-3 bg-gray-200 text-gray-400 rounded-lg">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 14l6-6m-5.5.5h.01m4.99 5h.01M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16l3.5-2 3.5 2 3.5-2 3.5 2z" />
+                    </svg>
+                </div>
+                <span class="text-xs font-medium text-gray-400 bg-gray-200 px-2 py-1 rounded-full">Próximamente</span>
+            </div>
+            <h3 class="text-xl font-semibold text-gray-400">Liquidación IVA/IIBB</h3>
+            <p class="mt-2 text-gray-400 text-sm">Generación automática de libros de IVA y archivos para aplicativos AFIP.</p>
+        </div>
+
+    </div>
+</div>
+
+{% endblock %}

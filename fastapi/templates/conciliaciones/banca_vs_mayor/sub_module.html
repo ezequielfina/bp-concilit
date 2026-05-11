@@ -1,0 +1,17 @@
+{% extends "index.html" %}
+
+{% block content %}
+<div class="max-w-7xl mx-auto py-10 px-4 sm:px-6 lg:px-8">
+
+    <nav class="flex mb-4 text-sm text-gray-500">
+        <a href="/" class="hover:text-blue-600 transition-colors">Inicio</a>
+        <span class="mx-2 text-gray-300">/</span>
+        <a href="/conciliaciones" class="hover:text-blue-600 transition-colors">Conciliaciones</a>
+        <span class="mx-2 text-gray-300">/</span>
+        <a href="/conciliaciones/banca-vs-mayor/" class="font-semibold text-gray-900 hover:text-blue-600 transition-colors">Banca vs Mayor</a>
+    </nav>
+
+    {% block submodule_content %}{% endblock %}
+
+</div>
+{% endblock %}

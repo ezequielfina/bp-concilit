@@ -1,0 +1,153 @@
+{% extends "/conciliaciones/alicuotas/sub_module.html" %}
+
+{% block submodule_content %}
+
+<div class="max-w-6xl mx-auto mt-10 grid grid-cols-1 lg:grid-cols-3 gap-8">
+
+    <section class="lg:col-span-1 bg-white p-6 rounded-2xl shadow-sm border border-gray-100 h-fit">
+        <div class="flex items-center space-x-3 mb-6">
+            <div class="p-2 bg-purple-100 text-purple-600 rounded-lg">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" />
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" />
+                </svg>
+            </div>
+            <h2 class="text-xl font-bold text-gray-800">Nueva Jurisdicción</h2>
+        </div>
+
+        <form id="form-jurisdiccion" class="space-y-4">
+            <div class="flex flex-col">
+                <label class="text-xs font-semibold text-gray-500 uppercase mb-1">Nombre de la Jurisdicción</label>
+                <input type="text" id="jur-nombre" name="nombre" placeholder="Ej: CABA, Buenos Aires, Córdoba..." required
+                    class="border border-gray-300 rounded-lg p-2.5 focus:ring-2 focus:ring-purple-500 outline-none transition-all" />
+                <p class="text-[10px] text-gray-400 mt-1">Máximo 60 caracteres.</p>
+            </div>
+
+            <button type="submit" id="btn-guardar-jur" class="w-full bg-purple-600 text-white py-3 rounded-xl font-bold hover:bg-purple-700 transition-all duration-300 shadow-md flex items-center justify-center">
+                <span>Guardar Jurisdicción</span>
+            </button>
+        </form>
+    </section>
+
+    <section class="lg:col-span-2 bg-white p-6 rounded-2xl shadow-sm border border-gray-100">
+        <div class="flex items-center justify-between mb-6">
+            <div class="flex items-center space-x-3">
+                <div class="p-2 bg-gray-100 text-gray-600 rounded-lg">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 10h16M4 14h16M4 18h16" />
+                    </svg>
+                </div>
+                <h2 class="text-xl font-bold text-gray-800">Jurisdicciones Configuradas</h2>
+            </div>
+            <span id="jur-count" class="text-xs font-bold bg-purple-50 text-purple-600 px-2.5 py-1 rounded-full">0 registradas</span>
+        </div>
+
+        <div class="overflow-hidden">
+            <table class="min-w-full divide-y divide-gray-200">
+                <thead>
+                    <tr>
+                        <th class="px-4 py-3 text-left text-xs font-bold text-gray-400 uppercase tracking-wider">Nombre</th>
+                        <th class="px-4 py-3 text-left text-xs font-bold text-gray-400 uppercase tracking-wider">ID Interno</th>
+                    </tr>
+                </thead>
+                <tbody id="tabla-jurisdicciones" class="divide-y divide-gray-100 text-sm text-gray-600">
+                    <tr>
+                        <td colspan="3" class="px-4 py-8 text-center text-gray-400">Cargando datos...</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </section>
+</div>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const form = document.getElementById('form-jurisdiccion');
+    const btnGuardar = document.getElementById('btn-guardar-jur');
+    const tabla = document.getElementById('tabla-jurisdicciones');
+    const countLabel = document.getElementById('jur-count');
+
+    // 1. FUNCIÓN PARA CARGAR TODAS LAS JURISDICCIONES
+    async function cargarJurisdicciones() {
+        try {
+            const res = await fetch('/api_v1/alicuotas/jurisdicciones/');
+            const data = await res.json();
+
+            tabla.innerHTML = '';
+            countLabel.textContent = `${data.length} registradas`;
+
+            if (data.length === 0) {
+                tabla.innerHTML = '<tr><td colspan="3" class="px-4 py-8 text-center text-gray-400">No hay jurisdicciones creadas aún.</td></tr>';
+                return;
+            }
+
+            data.forEach(jur => {
+                const row = document.createElement('tr');
+                row.className = "hover:bg-gray-50 transition-colors";
+                row.innerHTML = `
+                    <td class="px-4 py-3 font-semibold text-gray-700">${jur.nombre}</td>
+                    <td class="px-4 py-3 text-xs text-gray-400 font-mono">${jur.id}</td>
+                `;
+                tabla.appendChild(row);
+            });
+        } catch (e) {
+            console.error("Error cargando jurisdicciones:", e);
+            tabla.innerHTML = '<tr><td colspan="3" class="px-4 py-8 text-center text-red-400">Error al conectar con el servidor.</td></tr>';
+        }
+    }
+
+    // 2. LÓGICA DE POSTEO CON FEEDBACK MODERNO
+    form.addEventListener('submit', async (e) => {
+        e.preventDefault();
+        const inputNombre = document.getElementById('jur-nombre');
+        const originalContent = btnGuardar.innerHTML;
+
+        const payload = {
+            nombre: inputNombre.value
+        };
+
+        try {
+            const res = await fetch('/api_v1/alicuotas/jurisdicciones/', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(payload)
+            });
+
+            if (res.ok) {
+                // Feedback visual: Botón a Verde
+                btnGuardar.classList.remove('bg-purple-600', 'hover:bg-purple-700');
+                btnGuardar.classList.add('bg-green-500');
+                btnGuardar.innerHTML = `
+                    <svg class="h-5 w-5 mr-2 animate-bounce" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M5 13l4 4L19 7" />
+                    </svg>
+                    ¡Creada con éxito!
+                `;
+
+                form.reset();
+                cargarJurisdicciones(); // Refrescamos la tabla
+
+                setTimeout(() => {
+                    btnGuardar.classList.add('bg-purple-600', 'hover:bg-purple-700');
+                    btnGuardar.classList.remove('bg-green-500');
+                    btnGuardar.innerHTML = originalContent;
+                }, 2500);
+
+            } else {
+                const err = await res.json();
+                btnGuardar.classList.add('bg-red-500');
+                console.error(err.detail);
+                setTimeout(() => btnGuardar.classList.remove('bg-red-500'), 2000);
+            }
+        } catch (error) {
+            btnGuardar.classList.add('bg-red-500');
+            setTimeout(() => btnGuardar.classList.remove('bg-red-500'), 2000);
+        }
+    });
+
+    // Carga inicial
+    cargarJurisdicciones();
+});
+</script>
+
+{% endblock %}

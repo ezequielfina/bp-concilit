@@ -1,0 +1,114 @@
+<mxfile host="Electron" agent="Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) draw.io/29.5.2 Chrome/142.0.7444.265 Electron/39.6.1 Safari/537.36" version="29.5.2">
+  <diagram name="Page-1" id="WRqH6kZzT99Ffu_A4tZJ">
+    <mxGraphModel dx="1426" dy="841" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="827" pageHeight="1169" math="0" shadow="0">
+      <root>
+        <mxCell id="0" />
+        <mxCell id="1" parent="0" />
+        <mxCell id="YBKxRe_t3DMHpfcFP_4v-2" parent="1" style="strokeWidth=2;html=1;shape=mxgraph.flowchart.document2;whiteSpace=wrap;size=0.25;" value="Mayor (Excel)" vertex="1">
+          <mxGeometry height="60" width="100" x="130" y="270" as="geometry" />
+        </mxCell>
+        <mxCell id="YBKxRe_t3DMHpfcFP_4v-3" edge="1" parent="1" source="YBKxRe_t3DMHpfcFP_4v-18" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;entryX=0.5;entryY=0;entryDx=0;entryDy=0;entryPerimeter=0;exitX=0.5;exitY=1;exitDx=0;exitDy=0;exitPerimeter=0;" target="YBKxRe_t3DMHpfcFP_4v-2">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint x="334.02857142857147" y="220" as="sourcePoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="YBKxRe_t3DMHpfcFP_4v-14" edge="1" parent="1" source="YBKxRe_t3DMHpfcFP_4v-11" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;entryX=0.5;entryY=0;entryDx=0;entryDy=0;entryPerimeter=0;exitX=1;exitY=0.5;exitDx=0;exitDy=0;exitPerimeter=0;" target="YBKxRe_t3DMHpfcFP_4v-19">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint x="514" y="160" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="YBKxRe_t3DMHpfcFP_4v-11" parent="1" style="strokeWidth=2;html=1;shape=mxgraph.flowchart.start_2;whiteSpace=wrap;" value="Start" vertex="1">
+          <mxGeometry height="100" width="100" x="364" y="30" as="geometry" />
+        </mxCell>
+        <mxCell id="YBKxRe_t3DMHpfcFP_4v-12" edge="1" parent="1" source="YBKxRe_t3DMHpfcFP_4v-11" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;entryX=0.5;entryY=0;entryDx=0;entryDy=0;entryPerimeter=0;exitX=0;exitY=0.5;exitDx=0;exitDy=0;exitPerimeter=0;" target="YBKxRe_t3DMHpfcFP_4v-18">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint x="334" y="160" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="YBKxRe_t3DMHpfcFP_4v-13" parent="1" style="html=1;strokeWidth=2;shape=manualInput;whiteSpace=wrap;rounded=1;size=26;arcSize=11;labelBackgroundColor=none;labelPosition=center;verticalLabelPosition=middle;align=center;verticalAlign=middle;" value="Saldo bancario (Importe USD &amp;amp; ARS)" vertex="1">
+          <mxGeometry height="80" width="146" x="480" y="290" as="geometry" />
+        </mxCell>
+        <mxCell id="YBKxRe_t3DMHpfcFP_4v-23" edge="1" parent="1" source="YBKxRe_t3DMHpfcFP_4v-15" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;entryX=0.5;entryY=1;entryDx=0;entryDy=0;" target="YBKxRe_t3DMHpfcFP_4v-22">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="YBKxRe_t3DMHpfcFP_4v-29" connectable="0" parent="YBKxRe_t3DMHpfcFP_4v-23" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;points=[];" value="Mayor" vertex="1">
+          <mxGeometry relative="1" x="-0.098" y="1" as="geometry">
+            <mxPoint as="offset" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="YBKxRe_t3DMHpfcFP_4v-15" parent="1" style="strokeWidth=2;html=1;shape=mxgraph.flowchart.multi-document;whiteSpace=wrap;" value="Conciliación (Excel)" vertex="1">
+          <mxGeometry height="60" width="88" x="370" y="420" as="geometry" />
+        </mxCell>
+        <mxCell id="YBKxRe_t3DMHpfcFP_4v-16" edge="1" parent="1" source="YBKxRe_t3DMHpfcFP_4v-2" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;entryX=0;entryY=0.5;entryDx=0;entryDy=0;entryPerimeter=0;exitX=1;exitY=0.75;exitDx=0;exitDy=0;exitPerimeter=0;" target="YBKxRe_t3DMHpfcFP_4v-15">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint x="180" y="370" as="sourcePoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="YBKxRe_t3DMHpfcFP_4v-28" connectable="0" parent="YBKxRe_t3DMHpfcFP_4v-16" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;points=[];" value="Hoja Mayor" vertex="1">
+          <mxGeometry relative="1" x="-0.3128" y="1" as="geometry">
+            <mxPoint as="offset" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="YBKxRe_t3DMHpfcFP_4v-17" edge="1" parent="1" source="YBKxRe_t3DMHpfcFP_4v-13" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;entryX=1;entryY=0.5;entryDx=0;entryDy=0;entryPerimeter=0;exitX=0.5;exitY=1;exitDx=0;exitDy=0;" target="YBKxRe_t3DMHpfcFP_4v-15">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="YBKxRe_t3DMHpfcFP_4v-27" connectable="0" parent="YBKxRe_t3DMHpfcFP_4v-17" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;points=[];" value="Hoja llave" vertex="1">
+          <mxGeometry relative="1" x="-0.4589" y="-1" as="geometry">
+            <mxPoint as="offset" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="YBKxRe_t3DMHpfcFP_4v-18" parent="1" style="strokeWidth=2;html=1;shape=mxgraph.flowchart.display;whiteSpace=wrap;" value="SAP" vertex="1">
+          <mxGeometry height="60" width="100" x="130" y="160" as="geometry" />
+        </mxCell>
+        <mxCell id="YBKxRe_t3DMHpfcFP_4v-21" edge="1" parent="1" source="YBKxRe_t3DMHpfcFP_4v-19" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;entryX=1;entryY=0.5;entryDx=0;entryDy=0;" target="YBKxRe_t3DMHpfcFP_4v-13">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="YBKxRe_t3DMHpfcFP_4v-19" parent="1" style="strokeWidth=2;html=1;shape=mxgraph.flowchart.direct_data;whiteSpace=wrap;" value="Mail" vertex="1">
+          <mxGeometry height="60" width="100" x="600" y="150" as="geometry" />
+        </mxCell>
+        <mxCell id="YBKxRe_t3DMHpfcFP_4v-22" parent="1" style="verticalLabelPosition=middle;verticalAlign=middle;html=1;shape=trapezoid;perimeter=trapezoidPerimeter;whiteSpace=wrap;size=0.23;arcSize=10;flipV=1;labelPosition=center;align=center;legacyAnchorPoints=0;" value="PivotTable" vertex="1">
+          <mxGeometry height="60" width="100" x="364" y="540" as="geometry" />
+        </mxCell>
+        <mxCell id="YBKxRe_t3DMHpfcFP_4v-24" parent="1" style="verticalLabelPosition=middle;verticalAlign=middle;html=1;shape=trapezoid;perimeter=trapezoidPerimeter;whiteSpace=wrap;size=0.23;arcSize=10;flipV=1;labelPosition=center;align=center;legacyAnchorPoints=0;" value="Análisis" vertex="1">
+          <mxGeometry height="60" width="100" x="364" y="770" as="geometry" />
+        </mxCell>
+        <mxCell id="YBKxRe_t3DMHpfcFP_4v-26" parent="1" style="text;html=1;whiteSpace=wrap;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;rounded=0;" value="Clasificamos por subtotal de importe.&amp;nbsp;&lt;div&gt;A = 0;&amp;nbsp; B &amp;lt; 0; C &amp;gt; 0&lt;/div&gt;" vertex="1">
+          <mxGeometry height="60" width="126" x="464" y="770" as="geometry" />
+        </mxCell>
+        <mxCell id="yGx1EHm2X61nVtHM4IUq-4" edge="1" parent="1" source="yGx1EHm2X61nVtHM4IUq-1" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;entryX=0.5;entryY=1;entryDx=0;entryDy=0;" target="YBKxRe_t3DMHpfcFP_4v-24">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="yGx1EHm2X61nVtHM4IUq-5" connectable="0" parent="yGx1EHm2X61nVtHM4IUq-4" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;points=[];" value="Pivot" vertex="1">
+          <mxGeometry relative="1" x="-0.1172" y="-1" as="geometry">
+            <mxPoint as="offset" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="yGx1EHm2X61nVtHM4IUq-1" parent="1" style="strokeWidth=2;html=1;shape=mxgraph.flowchart.multi-document;whiteSpace=wrap;" value="Conciliación (Excel)" vertex="1">
+          <mxGeometry height="60" width="88" x="370" y="660" as="geometry" />
+        </mxCell>
+        <mxCell id="yGx1EHm2X61nVtHM4IUq-2" edge="1" parent="1" source="YBKxRe_t3DMHpfcFP_4v-22" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;entryX=0.5;entryY=0;entryDx=0;entryDy=0;entryPerimeter=0;" target="yGx1EHm2X61nVtHM4IUq-1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="yGx1EHm2X61nVtHM4IUq-3" connectable="0" parent="yGx1EHm2X61nVtHM4IUq-2" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;points=[];" value="Pivot" vertex="1">
+          <mxGeometry relative="1" x="-0.1724" as="geometry">
+            <mxPoint as="offset" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="yGx1EHm2X61nVtHM4IUq-6" parent="1" style="strokeWidth=2;html=1;shape=mxgraph.flowchart.multi-document;whiteSpace=wrap;" value="Conciliación (Excel)" vertex="1">
+          <mxGeometry height="60" width="88" x="370" y="880" as="geometry" />
+        </mxCell>
+        <mxCell id="yGx1EHm2X61nVtHM4IUq-7" edge="1" parent="1" source="YBKxRe_t3DMHpfcFP_4v-24" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;entryX=0.5;entryY=0;entryDx=0;entryDy=0;entryPerimeter=0;" target="yGx1EHm2X61nVtHM4IUq-6">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="yGx1EHm2X61nVtHM4IUq-8" connectable="0" parent="yGx1EHm2X61nVtHM4IUq-7" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;points=[];" value="Análisis" vertex="1">
+          <mxGeometry relative="1" x="-0.131" as="geometry">
+            <mxPoint as="offset" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="B3PbpuiMVTdS8NIbNytr-1" parent="1" style="text;html=1;whiteSpace=wrap;overflow=hidden;rounded=0;" value="&lt;h1 style=&quot;margin-top: 0px;&quot;&gt;Inputs&lt;/h1&gt;&lt;div&gt;- Mayor&lt;/div&gt;&lt;div&gt;- Saldos bancarios&lt;/div&gt;&lt;div&gt;- Saldo inicial (Contabilización)&lt;/div&gt;&lt;div&gt;- Saldo final (Contabilización)&lt;/div&gt;" vertex="1">
+          <mxGeometry height="120" width="180" x="760" y="80" as="geometry" />
+        </mxCell>
+      </root>
+    </mxGraphModel>
+  </diagram>
+</mxfile>

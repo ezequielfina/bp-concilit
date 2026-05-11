@@ -1,0 +1,270 @@
+{% extends "conciliaciones/banca_vs_mayor/sub_module.html" %}
+
+{% block submodule_content %}
+
+<div class="max-w-[1600px] mx-auto mt-8 px-4 space-y-6">
+
+    <section class="bg-white p-6 rounded-2xl shadow-sm border border-gray-100">
+        <div class="flex items-center space-x-2 mb-6 text-amber-600">
+            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 4a1 1 0 011-1h16a1 1 0 011 1v2.586a1 1 0 01-.293.707l-6.414 6.414a1 1 0 00-.293.707V17l-4 4v-6.586a1 1 0 00-.293-.707L3.293 7.293A1 1 0 013 6.586V4z" />
+            </svg>
+            <h2 class="font-bold uppercase text-xs tracking-wider">Filtros de Búsqueda</h2>
+        </div>
+
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-7 gap-4 items-end">
+            <div class="flex flex-col">
+                <label class="text-[10px] font-bold text-gray-400 uppercase mb-1">Empresa</label>
+                <select id="filter-empresa" class="border border-gray-200 rounded-lg p-2 text-sm outline-none focus:ring-2 focus:ring-amber-500 bg-gray-50">
+                    <option value="">Todas...</option>
+                    {% for empresa in empresas %}
+                        <option value="{{ empresa.id }}">{{ empresa.razon_social }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+
+            <div class="flex flex-col">
+                <label class="text-[10px] font-bold text-gray-400 uppercase mb-1">Cuenta</label>
+                <select id="filter-cuenta" class="border border-gray-200 rounded-lg p-2 text-sm outline-none focus:ring-2 focus:ring-amber-500 bg-gray-50">
+                    <option value="" disabled selected>Elegí empresa...</option>
+                </select>
+            </div>
+
+            <div class="flex flex-col">
+                <label class="text-[10px] font-bold text-gray-400 uppercase mb-1">Carga Mayor (Corte)</label>
+                <select id="filter-id-carga-mayor" class="border border-gray-200 rounded-lg p-2 text-sm outline-none focus:ring-2 focus:ring-amber-500 bg-gray-50">
+                    <option value="">Todas las cargas...</option>
+                </select>
+            </div>
+
+            <div class="flex flex-col">
+                <label class="text-[10px] font-bold text-gray-400 uppercase mb-1">Fecha Desde</label>
+                <input type="date" id="filter-fecha-inicio" class="border border-gray-200 rounded-lg p-2 text-sm outline-none focus:ring-2 focus:ring-amber-500 bg-gray-50" />
+            </div>
+
+            <div class="flex flex-col">
+                <label class="text-[10px] font-bold text-gray-400 uppercase mb-1">Fecha Hasta</label>
+                <input type="date" id="filter-fecha-fin" class="border border-gray-200 rounded-lg p-2 text-sm outline-none focus:ring-2 focus:ring-amber-500 bg-gray-50" />
+            </div>
+
+            <div class="flex flex-col">
+                <label class="text-[10px] font-bold text-gray-400 uppercase mb-1">Asignación</label>
+                <input type="text" id="filter-asignacion" placeholder="Buscar..." class="border border-gray-200 rounded-lg p-2 text-sm outline-none focus:ring-2 focus:ring-amber-500 bg-gray-50" />
+            </div>
+
+            <button id="btn-buscar" class="bg-amber-600 text-white px-4 py-2 rounded-lg hover:bg-amber-700 transition font-bold text-sm h-10 flex items-center justify-center space-x-2 shadow-lg shadow-amber-100">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+                </svg>
+                <span>Consultar</span>
+            </button>
+        </div>
+    </section>
+
+    <section class="bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden">
+        <div class="overflow-x-auto">
+            <table class="w-full text-left border-collapse">
+                <thead>
+                    <tr class="bg-gray-50 border-b border-gray-200 text-gray-400 text-[10px] uppercase font-bold tracking-wider">
+                        <th class="px-6 py-4">Asignación</th>
+                        <th class="px-4 py-4 text-center">Fecha DOC</th>
+                        <th class="px-6 py-4 text-right">Importe ML2</th>
+                        <th class="px-4 py-4 text-center">Saldo Anterior</th>
+                        <th class="px-6 py-4">ID Carga Mayor</th>
+                        <th class="px-4 py-4 text-center">Estado</th>
+                        <th class="px-4 py-4 text-center">Activo</th>
+                        <th class="px-6 py-4 text-center">Acciones</th>
+                    </tr>
+                </thead>
+                <tbody id="tabla-partidas" class="divide-y divide-gray-100 text-xs">
+                    <tr>
+                        <td colspan="8" class="px-6 py-12 text-center text-gray-400 italic">
+                            Seleccioná una cuenta y hacé clic en Consultar.
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </section>
+</div>
+
+<div id="modal-editar" class="fixed inset-0 bg-gray-900/50 backdrop-blur-sm hidden flex items-center justify-center z-50">
+    <div class="bg-white rounded-2xl shadow-2xl w-full max-w-md p-8 transform transition-all">
+        <div class="flex justify-between items-center mb-6">
+            <h3 class="text-lg font-bold text-gray-800">Editar Partida</h3>
+            <button onclick="cerrarModal()" class="text-gray-400 hover:text-gray-600">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" /></svg>
+            </button>
+        </div>
+
+        <form id="form-edit-partida" class="space-y-4">
+            <input type="hidden" id="edit-id">
+
+            <div class="flex flex-col">
+                <label class="text-[10px] font-bold text-gray-400 uppercase mb-1">Asignación</label>
+                <input type="text" id="edit-asignacion" required class="border border-gray-300 rounded-lg p-2.5 text-sm outline-none focus:ring-2 focus:ring-amber-500">
+            </div>
+
+            <div class="flex flex-col">
+                <label class="text-[10px] font-bold text-gray-400 uppercase mb-1">Importe ML2</label>
+                <input type="number" step="0.01" id="edit-importe" required class="border border-gray-300 rounded-lg p-2.5 text-sm outline-none focus:ring-2 focus:ring-amber-500 font-mono">
+            </div>
+
+            <div class="p-4 bg-gray-50 rounded-xl border border-gray-100">
+                <div class="flex items-center justify-between">
+                    <label class="text-sm font-semibold text-gray-700">Saldo Anterior (Arrastre)</label>
+                    <input type="checkbox" id="edit-anterior" class="h-5 w-5 text-amber-600 focus:ring-amber-500 border-gray-300 rounded cursor-pointer">
+                </div>
+            </div>
+
+            <div class="pt-4 flex space-x-3">
+                <button type="button" onclick="cerrarModal()" class="flex-1 px-4 py-3 border border-gray-200 text-gray-600 rounded-xl font-bold hover:bg-gray-50 transition">Cancelar</button>
+                <button type="submit" class="flex-1 px-4 py-3 bg-amber-600 text-white rounded-xl font-bold hover:bg-amber-700 transition shadow-lg shadow-amber-100">Guardar Cambios</button>
+            </div>
+        </form>
+    </div>
+</div>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const empSelect = document.getElementById('filter-empresa');
+    const cuentaSelect = document.getElementById('filter-cuenta');
+    const cargaMayorSelect = document.getElementById('filter-id-carga-mayor');
+    const tabla = document.getElementById('tabla-partidas');
+    const btnBuscar = document.getElementById('btn-buscar');
+    const modal = document.getElementById('modal-editar');
+
+    // 1. CARGA DE CUENTAS
+    empSelect.addEventListener('change', async (e) => {
+        cuentaSelect.innerHTML = '<option value="">Cargando...</option>';
+        try {
+            const res = await fetch(`/api_v1/cuentas?id_empresa=${e.target.value}`);
+            const data = await res.json();
+            cuentaSelect.innerHTML = '<option value="" selected>Seleccionar Cuenta</option>';
+            data.forEach(c => {
+                const opt = document.createElement('option');
+                opt.value = c.id; opt.textContent = c.nombre;
+                cuentaSelect.appendChild(opt);
+            });
+        } catch (err) { console.error(err); }
+    });
+
+    // 2. CARGA DE CARGAS MAYOR
+    cuentaSelect.addEventListener('change', async (e) => {
+        const idCuenta = e.target.value;
+        cargaMayorSelect.innerHTML = '<option value="">Cargando cortes...</option>';
+        try {
+            const res = await fetch(`/api_v1/partidas/cuenta/${idCuenta}`);
+            const data = await res.json();
+            cargaMayorSelect.innerHTML = '<option value="">Todas las cargas...</option>';
+            data.forEach(cm => {
+                const opt = document.createElement('option');
+                opt.value = cm.id;
+                const fecha = new Date(cm.fecha_carga).toLocaleString('es-AR', {day:'2-digit', month:'2-digit', hour:'2-digit', minute:'2-digit'});
+                opt.textContent = `${fecha} - ${cm.comentario || 'S/D'}`;
+                cargaMayorSelect.appendChild(opt);
+            });
+        } catch (err) { cargaMayorSelect.innerHTML = '<option value="">Error</option>'; }
+    });
+
+    // 3. CONSULTA DE PARTIDAS
+    async function fetchPartidas() {
+        const idCuenta = cuentaSelect.value;
+        if (!idCuenta) return;
+
+        btnBuscar.innerHTML = '<span class="animate-pulse">Consultando...</span>';
+        const params = new URLSearchParams();
+        params.append('id_cuenta', idCuenta);
+
+        const asig = document.getElementById('filter-asignacion').value;
+        const inicio = document.getElementById('filter-fecha-inicio').value;
+        const fin = document.getElementById('filter-fecha-fin').value;
+        const cargaId = cargaMayorSelect.value;
+
+        if (asig) params.append('asignacion', asig);
+        if (inicio) params.append('fecha_inicio', inicio);
+        if (fin) params.append('fecha_fin', fin);
+        if (cargaId) params.append('id_carga_mayor', cargaId);
+
+        try {
+            const res = await fetch(`/api_v1/partidas/?${params.toString()}`);
+            const partidas = await res.json();
+
+            tabla.innerHTML = '';
+            if (partidas.length === 0) {
+                tabla.innerHTML = '<tr><td colspan="8" class="px-6 py-12 text-center text-gray-400 italic">No hay resultados.</td></tr>';
+            } else {
+                partidas.forEach(p => {
+                    const tr = document.createElement('tr');
+                    tr.className = `hover:bg-gray-50 transition-colors ${!p.activo ? 'opacity-50' : ''}`;
+                    const importe = new Intl.NumberFormat('es-AR', { style: 'currency', currency: 'ARS' }).format(p.importe_valorado_ml2);
+
+                    tr.innerHTML = `
+                        <td class="px-6 py-4 font-bold text-gray-700">${p.asignacion}</td>
+                        <td class="px-4 py-4 text-center text-gray-500">${p.fecha_doc}</td>
+                        <td class="px-6 py-4 text-right font-mono font-bold ${p.importe_valorado_ml2 < 0 ? 'text-red-600' : 'text-emerald-600'}">${importe}</td>
+                        <td class="px-4 py-4 text-center">
+                            <span class="px-2 py-1 rounded text-[10px] font-bold uppercase ${p.anterior ? 'bg-amber-100 text-amber-700' : 'bg-emerald-100 text-emerald-700'}">
+                                ${p.anterior ? 'Arrastre' : 'Actual'}
+                            </span>
+                        </td>
+                        <td class="px-6 py-4 font-mono text-[10px] text-gray-400">${p.id_carga_mayor || '---'}</td>
+                        <td class="px-4 py-4 text-center">
+                            <span class="px-2 py-0.5 rounded-full text-[9px] font-bold uppercase bg-blue-50 text-blue-600">${p.estado || 'S/E'}</span>
+                        </td>
+                        <td class="px-4 py-4 text-center">${p.activo ? '✅' : '❌'}</td>
+                        <td class="px-6 py-4 text-center">
+                            <button onclick='abrirModal(${JSON.stringify(p)})' class="p-2 text-amber-600 hover:bg-amber-50 rounded-lg transition">
+                                <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z" /></svg>
+                            </button>
+                        </td>
+                    `;
+                    tabla.appendChild(tr);
+                });
+            }
+        } catch (e) { console.error(e); }
+        finally { btnBuscar.innerHTML = '<span>Consultar</span>'; }
+    }
+
+    btnBuscar.addEventListener('click', fetchPartidas);
+
+    // 4. LÓGICA MODAL
+    window.abrirModal = (p) => {
+        document.getElementById('edit-id').value = p.id;
+        document.getElementById('edit-asignacion').value = p.asignacion;
+        document.getElementById('edit-importe').value = p.importe_valorado_ml2;
+        document.getElementById('edit-anterior').checked = p.anterior;
+        modal.classList.remove('hidden');
+    };
+
+    window.cerrarModal = () => modal.classList.add('hidden');
+
+    document.getElementById('form-edit-partida').addEventListener('submit', async (e) => {
+        e.preventDefault();
+        const id = document.getElementById('edit-id').value;
+        const data = {
+            asignacion: document.getElementById('edit-asignacion').value,
+            importe_valorado_ml2: parseFloat(document.getElementById('edit-importe').value),
+            anterior: document.getElementById('edit-anterior').checked
+            // Eliminamos 'activo' del payload ya que no se puede modificar desde aquí
+        };
+
+        try {
+            const res = await fetch(`/api_v1/partidas/${id}`, {
+                method: 'PUT',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(data)
+            });
+
+            if (res.ok) {
+                cerrarModal();
+                fetchPartidas();
+            } else {
+                alert("Error al actualizar la partida");
+            }
+        } catch (err) { console.error(err); }
+    });
+});
+</script>
+
+{% endblock %}

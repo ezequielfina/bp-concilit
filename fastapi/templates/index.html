@@ -1,0 +1,20 @@
+<html lang="en">
+<!DOCTYPE html>
+<head>
+    <meta charset="UTF-8">
+    <title>Concilit</title>
+    <link rel="icon" type="image/png" href="{{ url_for('static', path='logo_bp.png') }}">
+</head>
+<body class="p-5 min-h-screen flex flex-col">
+
+    {% include "ui/header.html" %}
+
+    <main class="flex-grow">
+        {% block content %}{% endblock %}
+    </main>
+
+    {% include "ui/footer.html" %}
+
+    <script src="https://cdn.tailwindcss.com"></script>
+</body>
+</html>

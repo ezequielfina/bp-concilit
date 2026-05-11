@@ -1,0 +1,272 @@
+{% extends "conciliaciones/banca_vs_mayor/sub_module.html" %}
+
+{% block submodule_content %}
+
+<div class="max-w-[1600px] mx-auto mt-10 px-4">
+    <div class="grid grid-cols-1 xl:grid-cols-12 gap-8">
+
+        <div class="xl:col-span-5">
+            <section class="bg-white p-8 rounded-2xl shadow-sm border border-gray-100 sticky top-10">
+                <div class="flex items-center space-x-3 mb-8">
+                    <div class="p-2 bg-amber-100 text-amber-600 rounded-lg">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-8l-4-4m0 0L8 8m4-4v12" />
+                        </svg>
+                    </div>
+                    <div>
+                        <h2 class="text-xl font-bold text-gray-800">Nueva Carga</h2>
+                        <p class="text-sm text-gray-500">Subí un nuevo archivo para procesar.</p>
+                    </div>
+                </div>
+
+                <form id="upload-form" class="space-y-5">
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        <div class="flex flex-col">
+                            <label class="text-[10px] font-bold text-gray-400 uppercase mb-1">Empresa</label>
+                            <select id="up_empresa" name="empresa_id" required class="border border-gray-200 rounded-lg p-2.5 text-sm focus:ring-2 focus:ring-amber-500 outline-none bg-gray-50">
+                                <option value="" disabled selected>Seleccionar...</option>
+                                {% for empresa in empresas %}
+                                    <option value="{{ empresa.id }}">{{ empresa.razon_social }}</option>
+                                {% endfor %}
+                            </select>
+                        </div>
+                        <div class="flex flex-col">
+                            <label class="text-[10px] font-bold text-gray-400 uppercase mb-1">Cuenta</label>
+                            <select id="up_cuenta" name="id_cuenta" required class="border border-gray-200 rounded-lg p-2.5 text-sm focus:ring-2 focus:ring-amber-500 outline-none bg-gray-50">
+                                <option value="" disabled selected>Esperando empresa...</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <div class="flex flex-col">
+                        <label class="text-[10px] font-bold text-gray-400 uppercase mb-1">Archivo</label>
+                        <div class="relative border-2 border-dashed border-gray-200 rounded-xl p-6 hover:bg-amber-50 transition-all text-center group">
+                            <input type="file" name="file" id="file_input" required class="absolute inset-0 w-full h-full opacity-0 cursor-pointer">
+                            <p class="text-sm text-gray-500 group-hover:text-amber-700">Arrastrá o hacé click aquí</p>
+                        </div>
+                        <p id="file-name" class="mt-2 text-xs text-amber-600 font-medium hidden"></p>
+                    </div>
+
+                    <div class="flex flex-col">
+                        <label class="text-[10px] font-bold text-gray-400 uppercase mb-1">Comentario</label>
+                        <textarea name="comentario" rows="2" class="border border-gray-200 rounded-lg p-2.5 text-sm outline-none focus:ring-2 focus:ring-amber-500 bg-gray-50" placeholder="Opcional..."></textarea>
+                    </div>
+
+                    <button type="submit" id="btn-submit" class="w-full bg-amber-600 text-white py-3 rounded-xl font-bold hover:bg-amber-700 transition shadow-lg shadow-amber-100">
+                        Iniciar Procesamiento
+                    </button>
+                </form>
+            </section>
+        </div>
+
+        <div class="xl:col-span-7">
+            <section class="bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden">
+
+                <div class="p-6 bg-gray-50/50 border-b border-gray-100">
+                    <div class="flex flex-col md:flex-row md:items-end gap-4">
+                        <div class="flex-1">
+                            <label class="text-[10px] font-bold text-gray-400 uppercase mb-1 block">Filtrar Empresa</label>
+                            <select id="hist_empresa" class="w-full border border-gray-200 rounded-lg p-2 text-sm outline-none focus:ring-2 focus:ring-amber-500">
+                                <option value="" selected>Todas las empresas</option>
+                                {% for empresa in empresas %}
+                                    <option value="{{ empresa.id }}">{{ empresa.razon_social }}</option>
+                                {% endfor %}
+                            </select>
+                        </div>
+                        <div class="flex-1">
+                            <label class="text-[10px] font-bold text-gray-400 uppercase mb-1 block">Filtrar Cuenta</label>
+                            <select id="hist_cuenta" class="w-full border border-gray-200 rounded-lg p-2 text-sm outline-none focus:ring-2 focus:ring-amber-500">
+                                <option value="" disabled selected>Seleccioná empresa</option>
+                            </select>
+                        </div>
+                        <button onclick="fetchCargas()" class="p-2.5 bg-white border border-gray-200 text-gray-600 rounded-lg hover:bg-gray-100 transition">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
+                            </svg>
+                        </button>
+                    </div>
+                </div>
+
+                <div class="overflow-x-auto">
+                    <table class="w-full text-left border-collapse">
+                        <thead>
+                            <tr class="bg-gray-50/50 text-gray-400 text-[10px] uppercase font-bold tracking-wider">
+                                <th class="px-6 py-4">Fecha</th>
+                                <th class="px-6 py-4">Comentario</th>
+                                <th class="px-6 py-4">Estado</th>
+                                <th class="px-6 py-4 text-center">Refresh</th>
+                                <th class="px-6 py-4 text-center">Visible</th> </tr>
+                        </thead>
+                        <tbody id="table-cargas" class="divide-y divide-gray-100 text-sm">
+                            <tr><td colspan="4" class="px-6 py-12 text-center text-gray-400 italic">Seleccioná una cuenta para consultar el historial.</td></tr>
+                        </tbody>
+                    </table>
+                </div>
+            </section>
+        </div>
+    </div>
+</div>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    // Selectores
+    const upEmpresa = document.getElementById('up_empresa');
+    const upCuenta = document.getElementById('up_cuenta');
+    const form = document.getElementById('upload-form');
+    const histEmpresa = document.getElementById('hist_empresa');
+    const histCuenta = document.getElementById('hist_cuenta');
+    const tableBody = document.getElementById('table-cargas');
+
+    // Función Reutilizable para Cargar Cuentas
+    async function cargarCuentas(idEmpresa, targetSelect) {
+        targetSelect.innerHTML = '<option value="" disabled selected>Cargando...</option>';
+        try {
+            const res = await fetch(`/api_v1/cuentas?id_empresa=${idEmpresa}`);
+            const data = await res.json();
+            targetSelect.innerHTML = '<option value="" disabled selected>Seleccioná cuenta</option>';
+            data.forEach(c => {
+                const opt = document.createElement('option');
+                opt.value = c.id;
+                opt.textContent = c.nombre || c.descripcion;
+                targetSelect.appendChild(opt);
+            });
+        } catch (err) {
+            targetSelect.innerHTML = '<option value="" disabled>Error</option>';
+        }
+    }
+
+    upEmpresa.addEventListener('change', (e) => cargarCuentas(e.target.value, upCuenta));
+    histEmpresa.addEventListener('change', (e) => cargarCuentas(e.target.value, histCuenta));
+    histCuenta.addEventListener('change', fetchCargas);
+
+    // --- FETCH CARGAS ---
+    async function fetchCargas() {
+        const idCuenta = histCuenta.value;
+        if (!idCuenta) return;
+
+        // Actualizado a colspan="5"
+        tableBody.innerHTML = '<tr><td colspan="5" class="px-6 py-8 text-center text-gray-400 animate-pulse">Consultando base de datos...</td></tr>';
+
+        try {
+            const res = await fetch(`/api_v1/partidas/cuenta/${idCuenta}`);
+            const cargas = await res.json();
+
+            if (!cargas.length) {
+                tableBody.innerHTML = '<tr><td colspan="5" class="px-6 py-12 text-center text-gray-400">No hay registros.</td></tr>';
+                return;
+            }
+
+            tableBody.innerHTML = '';
+            cargas.sort((a,b) => new Date(b.fecha_carga) - new Date(a.fecha_carga)).forEach(c => {
+                tableBody.appendChild(createRow(c));
+            });
+        } catch (err) {
+            console.error(err);
+            tableBody.innerHTML = '<tr><td colspan="5" class="px-6 py-4 text-center text-red-500">Error al traer datos.</td></tr>';
+        }
+    }
+    window.fetchCargas = fetchCargas;
+
+    function createRow(carga) {
+        const tr = document.createElement('tr');
+        tr.id = `carga-${carga.id}`;
+
+        // LOGICA DE FECHA COMPLETA
+        const fecha = new Date(carga.fecha_carga).toLocaleString('es-AR', {
+            day:'2-digit', month:'2-digit', hour:'2-digit', minute:'2-digit'
+        });
+
+        // LOGICA DE COLORES COMPLETA
+        let badgeClass = 'bg-amber-100 text-amber-600';
+        const estado = carga.estado || '';
+        if (estado.startsWith('Falló')) badgeClass = 'bg-red-100 text-red-600';
+        else if (estado.startsWith('Pendiente')) badgeClass = 'bg-gray-100 text-gray-500';
+        else if (estado.startsWith('Validando') || estado.startsWith('Transformando') || estado.startsWith('Cargando')) badgeClass = 'bg-blue-100 text-blue-600';
+        else if (estado.startsWith('PROCESADO') || estado.startsWith('Carga exitosa')) badgeClass = 'bg-green-100 text-green-600';
+
+        const activoIcon = carga.activo
+            ? `<svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-green-500" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" /><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" /></svg>`
+            : `<svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-gray-300" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13.875 18.825A10.05 10.05 0 0112 19c-4.478 0-8.268-2.943-9.543-7a9.97 9.97 0 011.563-3.029m5.858.908a3 3 0 114.243 4.243M9.878 9.878l4.242 4.242M9.88 9.88l-3.29-3.29m7.532 7.532l3.29 3.29M3 3l18 18" /></svg>`;
+
+        tr.innerHTML = `
+            <td class="px-6 py-4 font-medium text-gray-600">${fecha}</td>
+            <td class="px-6 py-4 text-gray-400 italic text-xs">${carga.comentario || '---'}</td>
+            <td class="px-6 py-4">
+                <span class="px-2 py-0.5 rounded-full text-[10px] font-bold uppercase ${badgeClass}">${carga.estado}</span>
+            </td>
+            <td class="px-6 py-4 text-center">
+                <button onclick="refreshIndividual('${carga.id}')" class="p-1.5 hover:bg-gray-100 rounded-full transition text-gray-400 hover:text-amber-600">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
+                    </svg>
+                </button>
+            </td>
+            <td class="px-6 py-4 text-center">
+                <button onclick="toggleActivo('${carga.id}')" class="p-1.5 hover:bg-gray-100 rounded-full transition">
+                    ${activoIcon}
+                </button>
+            </td>
+        `;
+        return tr;
+    }
+
+    // --- REFRESH INDIVIDUAL ---
+    window.refreshIndividual = async (id) => {
+        const btn = document.querySelector(`#carga-${id} button`);
+        btn.classList.add('animate-spin');
+        try {
+            const res = await fetch(`/api_v1/partidas/${id}`);
+            const data = await res.json();
+            document.getElementById(`carga-${id}`).replaceWith(createRow(data));
+        } catch (e) { console.error(e); }
+        finally { btn.classList.remove('animate-spin'); }
+    };
+
+    // --- TOGGLE ACTIVO ---
+    window.toggleActivo = async (id) => {
+        const row = document.getElementById(`carga-${id}`);
+        row.style.opacity = '0.5';
+        try {
+            const res = await fetch(`/api_v1/partidas/carga_mayor/cambiar-activo/${id}`, { method: 'PUT' });
+            if (res.ok) {
+                const data = await res.json();
+                row.replaceWith(createRow(data));
+            }
+        } catch (e) { console.error(e); }
+        finally { row.style.opacity = '1'; }
+    };
+
+    // --- SUBIDA DE ARCHIVO ---
+    form.addEventListener('submit', async (e) => {
+        e.preventDefault();
+        const btn = document.getElementById('btn-submit');
+        const originalText = btn.innerText;
+        btn.disabled = true;
+        btn.innerText = "Enviando...";
+
+        try {
+            const res = await fetch('/api_v1/partidas/subir-mayor', { method: 'POST', body: new FormData(form) });
+            if (res.ok) {
+                btn.className = btn.className.replace('bg-amber-600', 'bg-green-600');
+                btn.innerText = "¡Listo!";
+                form.reset();
+                if(upCuenta.value === histCuenta.value) fetchCargas();
+            }
+        } catch (err) { btn.innerText = "Error"; }
+        finally {
+            setTimeout(() => {
+                btn.disabled = false;
+                btn.innerText = originalText;
+                btn.className = "w-full bg-amber-600 text-white py-3 rounded-xl font-bold hover:bg-amber-700 transition shadow-lg shadow-amber-100";
+            }, 3000);
+        }
+    });
+
+    document.getElementById('file_input').addEventListener('change', e => {
+        document.getElementById('file-name').innerText = "📎 " + e.target.files[0].name;
+        document.getElementById('file-name').classList.remove('hidden');
+    });
+});
+</script>
+
+{% endblock %}
