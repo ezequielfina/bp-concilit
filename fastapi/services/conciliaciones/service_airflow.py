@@ -3,11 +3,8 @@ from models.conciliaciones.SaldoBancario import SaldoBancario
 import httpx
 from fastapi import HTTPException
 from sqlalchemy.orm import Session
-from dotenv import load_dotenv
 import os
 
-
-load_dotenv('../.env')
 
 
 async def call_dag_init_data(id_cuenta: str, id_carga_mayor: str):

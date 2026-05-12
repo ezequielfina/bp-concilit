@@ -8,3 +8,8 @@
 
 # Diagram
 /.$Flow data.drawio.bkp
+
+.env.dev
+.env.prod
+
+/db-init/

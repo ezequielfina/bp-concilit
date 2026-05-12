@@ -1,15 +1,23 @@
 import os
-from dotenv import load_dotenv
 from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker, DeclarativeBase  # <-- Cambio aquí
 from sqlalchemy.pool import QueuePool
 
-load_dotenv()
+DB_USER = os.getenv("POSTGRES_USER")
+DB_PASSWORD = os.getenv("POSTGRES_PASSWORD")
+DB_HOST = os.getenv("POSTGRES_HOST")
+DB_PORT = os.getenv("POSTGRES_PORT")
+DB_NAME = os.getenv("POSTGRES_DB")
+
+URI_DB = f'postgresql://{DB_USER}:{DB_PASSWORD}@{DB_HOST}:{DB_PORT}/{DB_NAME}'
+
+print(URI_DB)
+
 
 # 1. Configuración del Engine con Pooling
 # En producción, quieres manejar las conexiones inactivas para que no mueran
 engine = create_engine(
-    os.getenv('URI_DB'),
+    URI_DB,
     pool_size=10,            # Conexiones mantenidas abiertas
     max_overflow=20,         # Conexiones extra si hay picos de tráfico
     pool_pre_ping=True       # Verifica si la conexión sigue viva antes de usarla
