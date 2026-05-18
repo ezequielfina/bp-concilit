@@ -1,5 +1,5 @@
 import pandas as pd
-import os, sys
+import os
 import shutil
 
 from airflow.decorators import task
@@ -95,12 +95,12 @@ def val(file_name: str, id_cuenta: str):
     except FileNotFoundError as e:
         update_status_carga_mayor(file_name, 'Falló validación - File cause')
         print(f'Error in the path -> {e}')
-        sys.exit(1)
+        raise
     except ValueError as e:
         update_status_carga_mayor(file_name, 'Falló validación')
         print(f'Error in data -> {e}')
-        sys.exit(1)
+        raise
     except Exception as e:
         update_status_carga_mayor(file_name, 'Falló validación')
         print('Error trying to validate original file: ', e)
-        sys.exit(1)
+        raise

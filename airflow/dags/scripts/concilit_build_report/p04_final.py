@@ -1,12 +1,10 @@
 import os
-import sys
-from datetime import datetime
 
+from ..utils.engine_db import get_hook_sql
 import pandas as pd
 from pandas import ExcelWriter
 
 from airflow.decorators import task
-from airflow.providers.postgres.hooks.postgres import PostgresHook
 
 from ..p_update_status import (
     update_status_reporte_saldo_bancario,
@@ -14,7 +12,6 @@ from ..p_update_status import (
 )
 
 RESULTS_PATH = '/data/results/'
-CONN_ID = 'conn_postgre_db'
 
 
 @task
@@ -39,9 +36,9 @@ def final_report(prev_info: dict):
         subtotal_ars = df['importe_valorado_ml2'].sum()
         subtotal_usd = df['importe_moneda_local'].sum()
 
-        hook = PostgresHook(postgres_conn_id=CONN_ID)
+        hook_sql = get_hook_sql()
 
-        records = hook.get_records(
+        records = hook_sql.get_records(
             'SELECT * FROM fn_saldo_bancario(%(id)s)',
             parameters={'id': id_saldo_bancario}
         )

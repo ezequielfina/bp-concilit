@@ -1,5 +1,5 @@
 from airflow.decorators import task
-from .utils.engine_db import get_engine
+from .utils.engine_db import get_hook_sql
 from sqlalchemy import text
 import sys
 
@@ -7,7 +7,8 @@ import sys
 @task
 def update_anterior():
     try:
-        engine = get_engine()
+        hook_sql = get_hook_sql()
+        engine = hook_sql.get_sqlalchemy_engine()
 
         with engine.begin() as conn:
 
@@ -18,4 +19,4 @@ def update_anterior():
 
     except Exception as e:
         print('Error trying to update anterior: ', e)
-        sys.exit(1)
+        raise
