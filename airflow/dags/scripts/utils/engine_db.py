@@ -1,12 +1,7 @@
-from sqlalchemy import create_engine
-from sqlalchemy.engine import Engine
-import os
+from airflow.providers.postgres.hooks.postgres import PostgresHook
 
 
+def get_hook_sql() -> PostgresHook:
+    hook: PostgresHook = PostgresHook(postgres_conn_id='conn_postgre_db')
 
-def get_engine() -> Engine:
-    uri: str = os.getenv('URI_DB')
-
-    engine: Engine = create_engine(uri)
-
-    return engine
+    return hook
