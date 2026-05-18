@@ -88,29 +88,34 @@
 <script>
 document.addEventListener('DOMContentLoaded', function() {
     const selectEmpresa = document.getElementById('select-empresa');
-    const selectCuenta = document.getElementById('select-cuenta');
-    const selectSaldo = document.getElementById('select-saldo');
-    const detalleBox = document.getElementById('detalle-saldo');
-    const detArs = document.getElementById('det-ars');
-    const detUsd = document.getElementById('det-usd');
-    const detStatus = document.getElementById('det-status');
-    const btnConstruir = document.getElementById('btn-construir');
-    const btnRefresh = document.getElementById('btn-refresh');
-    const btnDescargar = document.getElementById('btn-descargar');
-    const iconRefresh = document.getElementById('icon-refresh');
+    const selectCuenta  = document.getElementById('select-cuenta');
+    const selectSaldo   = document.getElementById('select-saldo');
+    const detalleBox    = document.getElementById('detalle-saldo');
+    const detArs        = document.getElementById('det-ars');
+    const detUsd        = document.getElementById('det-usd');
+    const detStatus     = document.getElementById('det-status');
+    const btnConstruir  = document.getElementById('btn-construir');
+    const btnRefresh    = document.getElementById('btn-refresh');
+    const btnDescargar  = document.getElementById('btn-descargar');
+    const iconRefresh   = document.getElementById('icon-refresh');
 
     let saldosActuales = [];
+    let pollingInterval = null;          // ← nuevo: referencia al intervalo activo
 
-    const fmtMoneda = (val, curr) => new Intl.NumberFormat('es-AR', { style: 'currency', currency: curr }).format(val);
+    const fmtMoneda = (val, curr) =>
+        new Intl.NumberFormat('es-AR', { style: 'currency', currency: curr }).format(val);
 
-    // Lógica de colores para estados (Reconoce "construcción" con tilde o sin tilde)
+    const ESTADOS_FINALES = ['exitosa', 'exito', 'error', 'falló', 'fallo'];
+
+    const esFinal = (status) =>
+        ESTADOS_FINALES.some(f => status.toLowerCase().includes(f));
+
     const updateBadgeStatus = (status) => {
         detStatus.className = "px-3 py-1 rounded-full text-[10px] font-bold uppercase transition-all ";
         const s = status.toLowerCase();
-
         if (s.includes('exitosa') || s.includes('exito')) {
             detStatus.classList.add('bg-green-100', 'text-green-600');
-        } else if (s.includes('error') || s.includes('falló')) {
+        } else if (s.includes('error') || s.includes('falló') || s.includes('fallo')) {
             detStatus.classList.add('bg-red-100', 'text-red-600');
         } else if (s.includes('proceso') || s.includes('constru')) {
             detStatus.classList.add('bg-blue-100', 'text-blue-600');
@@ -120,7 +125,6 @@ document.addEventListener('DOMContentLoaded', function() {
     };
 
     const checkDownloadAvailability = (status) => {
-        // Mostramos el botón de Excel solo si el proceso terminó bien
         if (status.toLowerCase().includes('exitosa')) {
             btnDescargar.classList.remove('hidden');
         } else {
@@ -128,9 +132,58 @@ document.addEventListener('DOMContentLoaded', function() {
         }
     };
 
-    // Cascada de Selects
+    // ─── Polling ──────────────────────────────────────────────────────────────
+
+    function stopPolling() {
+        if (pollingInterval) {
+            clearInterval(pollingInterval);
+            pollingInterval = null;
+        }
+        iconRefresh.classList.remove('animate-spin');
+    }
+
+    async function fetchStatus() {
+        const idSaldo = selectSaldo.value;
+        if (!idSaldo) return;
+
+        iconRefresh.classList.add('animate-spin');
+        try {
+            const res   = await fetch(`/api_v1/saldos_bancarios/${idSaldo}`);
+            const saldo = await res.json();
+
+            detStatus.innerText = saldo.status_reporte;
+            updateBadgeStatus(saldo.status_reporte);
+            checkDownloadAvailability(saldo.status_reporte);
+
+            // Si llegó a un estado final, detenemos el polling
+            if (esFinal(saldo.status_reporte)) {
+                stopPolling();
+                btnConstruir.disabled = false;
+                btnRefresh.disabled   = false;
+            }
+        } catch (e) {
+            console.error(e);
+            stopPolling();          // ante un error de red también paramos
+            btnConstruir.disabled = false;
+        } finally {
+            // Solo sacamos el spin si no hay polling activo
+            if (!pollingInterval) {
+                iconRefresh.classList.remove('animate-spin');
+            }
+        }
+    }
+
+    function startPolling(intervalMs = 3000) {
+        stopPolling();                          // limpia cualquier intervalo previo
+        fetchStatus();                          // primer fetch inmediato
+        pollingInterval = setInterval(fetchStatus, intervalMs);
+    }
+
+    // ─── Cascada de selects ───────────────────────────────────────────────────
+
     selectEmpresa.addEventListener('change', async (e) => {
-        const res = await fetch(`/api_v1/cuentas/?id_empresa=${e.target.value}`);
+        stopPolling();
+        const res  = await fetch(`/api_v1/cuentas/?id_empresa=${e.target.value}`);
         const data = await res.json();
         selectCuenta.innerHTML = '<option value="" disabled selected>Seleccioná cuenta</option>';
         data.forEach(c => {
@@ -142,7 +195,8 @@ document.addEventListener('DOMContentLoaded', function() {
     });
 
     selectCuenta.addEventListener('change', async (e) => {
-        const res = await fetch(`/api_v1/saldos_bancarios/cuenta/${e.target.value}`);
+        stopPolling();
+        const res   = await fetch(`/api_v1/saldos_bancarios/cuenta/${e.target.value}`);
         saldosActuales = await res.json();
         selectSaldo.innerHTML = '<option value="" disabled selected>Seleccioná fecha de corte</option>';
         saldosActuales.forEach(s => {
@@ -155,6 +209,7 @@ document.addEventListener('DOMContentLoaded', function() {
     });
 
     selectSaldo.addEventListener('change', (e) => {
+        stopPolling();
         const saldo = saldosActuales.find(s => s.id === e.target.value);
         if (saldo) {
             detArs.innerText = fmtMoneda(saldo.saldo_ars, 'ARS');
@@ -164,59 +219,55 @@ document.addEventListener('DOMContentLoaded', function() {
             checkDownloadAvailability(saldo.status_reporte);
             detalleBox.classList.remove('hidden');
             btnConstruir.disabled = false;
-            btnRefresh.disabled = false;
+            btnRefresh.disabled   = false;
         }
     });
 
-    // Acción: Construir Reporte con Feedback de UI
+    // ─── Construir reporte ────────────────────────────────────────────────────
+
     btnConstruir.addEventListener('click', async () => {
-        const idSaldo = selectSaldo.value;
-        const originalContent = btnConstruir.innerHTML;
+        const idSaldo       = selectSaldo.value;
+        const originalHTML  = btnConstruir.innerHTML;
 
         btnConstruir.disabled = true;
+        btnRefresh.disabled   = true;
         btnConstruir.innerHTML = `
             <svg class="animate-spin h-5 w-5 mr-2 text-white" viewBox="0 0 24 24">
                 <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4" fill="none"></circle>
                 <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
             </svg>
-            <span>Procesando...</span>
-        `;
+            <span>Procesando...</span>`;
 
         try {
             const res = await fetch(`/api_v1/reporte/${idSaldo}`, { method: 'POST' });
             if (res.ok) {
                 btnConstruir.classList.replace('bg-emerald-600', 'bg-green-600');
                 btnConstruir.innerHTML = '<span>¡Construcción Iniciada!</span>';
+
+                // Espera 1.5s para mostrar el feedback y luego arranca el polling
                 setTimeout(() => {
                     btnConstruir.classList.replace('bg-green-600', 'bg-emerald-600');
-                    btnConstruir.innerHTML = originalContent;
-                    btnConstruir.disabled = false;
-                    refreshData();
-                }, 2000);
+                    btnConstruir.innerHTML = originalHTML;
+                    startPolling(3000);   // ← polling cada 3 segundos
+                }, 1500);
+            } else {
+                throw new Error('Respuesta no OK');
             }
         } catch (err) {
-            btnConstruir.innerHTML = '<span>Error</span>';
+            btnConstruir.innerHTML = '<span>Error al iniciar</span>';
             setTimeout(() => {
-                btnConstruir.innerHTML = originalContent;
-                btnConstruir.disabled = false;
+                btnConstruir.innerHTML = originalHTML;
+                btnConstruir.disabled  = false;
+                btnRefresh.disabled    = false;
             }, 2000);
         }
     });
 
-    async function refreshData() {
-        const idSaldo = selectSaldo.value;
-        if (!idSaldo) return;
-        iconRefresh.classList.add('animate-spin');
-        try {
-            const res = await fetch(`/api_v1/saldos_bancarios/${idSaldo}`);
-            const saldo = await res.json();
-            detStatus.innerText = saldo.status_reporte;
-            updateBadgeStatus(saldo.status_reporte);
-            checkDownloadAvailability(saldo.status_reporte);
-        } catch (e) { console.error(e); }
-        finally { setTimeout(() => iconRefresh.classList.remove('animate-spin'), 600); }
-    }
-    btnRefresh.addEventListener('click', refreshData);
+    // ─── Refresh manual ───────────────────────────────────────────────────────
+
+    btnRefresh.addEventListener('click', fetchStatus);
+
+    // ─── Descargar ────────────────────────────────────────────────────────────
 
     btnDescargar.addEventListener('click', () => {
         window.location.href = `/api_v1/reporte/${selectSaldo.value}`;

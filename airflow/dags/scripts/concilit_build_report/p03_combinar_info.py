@@ -7,7 +7,7 @@ from ..p_update_status import update_status_reporte_saldo_bancario, update_exten
 
 
 @task
-def final_report(info_previa: dict):
+def combinar_info(info_previa: dict) -> dict:
     id_saldo_bancario = info_previa['id_saldo_bancario']
 
     try:
@@ -15,7 +15,7 @@ def final_report(info_previa: dict):
 
         hay_filas = info_previa['hay_filas']
 
-        path_result = os.path.join('/data/results/', id_saldo_bancario + '.xlsx')
+        path_result = os.path.join('/data/results/', id_saldo_bancario + '.csv')
         if os.path.isfile(path_result):
             os.remove(path_result)
 
@@ -28,19 +28,22 @@ def final_report(info_previa: dict):
 
             df = pd.concat([df_sql, df_pandas], ignore_index=True)
 
-            df.to_excel(path_result, index=False)
+            df.to_csv(path_result, index=False)
 
-            update_status_reporte_saldo_bancario(id_saldo_bancario, 'Construcción exitosa')
-            update_extension_reporte_saldo_bancario(id_saldo_bancario, '.xlsx')
-            return path_result
+            update_status_reporte_saldo_bancario(id_saldo_bancario, 'Combinación completada')
+            update_extension_reporte_saldo_bancario(id_saldo_bancario, '.csv')
 
-        df_sql.to_excel(path_result, index=False)
+            return {'id_saldo_bancario': id_saldo_bancario}
 
-        update_status_reporte_saldo_bancario(id_saldo_bancario, 'Construcción exitosa')
-        update_extension_reporte_saldo_bancario(id_saldo_bancario, '.xlsx')
-        return path_result
+        else:
+            df_sql.to_csv(path_result, index=False)
+
+        update_status_reporte_saldo_bancario(id_saldo_bancario, 'Combinación completada')
+        update_extension_reporte_saldo_bancario(id_saldo_bancario, '.csv')
+
+        return {'id_saldo_bancario': id_saldo_bancario}
 
     except Exception as e:
         update_status_reporte_saldo_bancario(id_saldo_bancario, 'Falló build - Combinando resultados')
         print(e)
-        sys.exit(1)
+        raise

@@ -218,3 +218,29 @@ as $$
         and m.fecha_contabilizacion <= par_fecha_corte;
     end;
 $$;
+
+
+create function fn_saldo_bancario(p_id_saldo_bancario uuid)
+    returns TABLE(cuit character varying, razon_social character varying, cuenta character varying, descripcion_cuenta varchar(256), fecha date, saldo_ars numeric, saldo_usd numeric)
+    language plpgsql
+as
+$$
+    begin
+        return query
+            select
+                emp.cuit as cuit,
+                emp.razon_social as razon_social,
+                cue.nombre as cuenta,
+                cue.comentario,
+                sb.fecha as fecha,
+                sb.saldo_ars as saldo_ars,
+                sb.saldo_usd as saldo_usd
+            from saldos_bancarios as sb
+            join cuentas as cue
+            on sb.id_cuenta = cue.id
+            join empresas as emp
+            on cue.id_empresa = emp.id
+            where sb.id = p_id_saldo_bancario
+        ;
+    end;
+$$;

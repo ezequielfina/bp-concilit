@@ -4,7 +4,8 @@ from airflow import DAG
 
 from scripts.concilit_build_report.p01_analizar_partidas_pendientes import analizar_partidas_pendientes as app
 from scripts.concilit_build_report.p02_get_reporte_main import get_reporte_main as grm
-from scripts.concilit_build_report.p03_final_report import final_report as fr
+from scripts.concilit_build_report.p03_combinar_info import combinar_info as ci
+from scripts.concilit_build_report.p04_final import final_report as fr
 from scripts.p_update_anterior import update_anterior
 
 
@@ -45,8 +46,10 @@ with DAG(
 
     t2_report_from_sql = grm(t1_p_v_p)
 
-    t3_fr = fr(t2_report_from_sql)
+    t3_ci = ci(t2_report_from_sql)
+
+    t4_fr = fr(t3_ci)
 
     t0_update_anterior >> t1_p_v_p
 
-    t1_p_v_p >> t2_report_from_sql >> t3_fr
+    t1_p_v_p >> t2_report_from_sql >> t3_ci >> t4_fr
