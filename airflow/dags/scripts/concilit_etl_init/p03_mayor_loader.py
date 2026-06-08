@@ -2,7 +2,7 @@ import os
 import pandas as pd
 from airflow.decorators import task
 from ..p_update_status import update_status_carga_mayor
-from ..utils.engine_db import get_hook_sql
+from ..utils.engine_db import get_engine_db
 
 
 @task
@@ -11,8 +11,7 @@ def load(file_name):
     try:
         update_status_carga_mayor(file_name, 'Cargando data en DB')
 
-        hook_sql = get_hook_sql()
-        engine = hook_sql.get_sqlalchemy_engine()
+        engine = get_engine_db()
 
         full_path = os.path.join('/data/to_load/mayor', file_name + '.csv')
         df_mayor: pd.DataFrame = pd.read_csv(full_path)

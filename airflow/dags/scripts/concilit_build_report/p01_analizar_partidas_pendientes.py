@@ -1,4 +1,4 @@
-from ..utils.engine_db import get_hook_sql
+from ..utils.engine_db import get_engine_db
 from airflow.decorators import task
 import pandas as pd
 from sqlalchemy import text
@@ -16,8 +16,7 @@ def analizar_partidas_pendientes(id_saldo_bancario):
         if os.path.isfile(path_result):
             os.remove(path_result)
 
-        hook_sql = get_hook_sql()
-        engine = hook_sql.get_sqlalchemy_engine()
+        engine = get_engine_db()
 
         query = """
             SELECT * FROM fn_asignaciones_analizar_via_pandas(:id_saldo_bancario)
