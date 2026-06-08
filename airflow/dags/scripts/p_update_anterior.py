@@ -1,13 +1,12 @@
 from airflow.decorators import task
-from .utils.engine_db import get_engine
+from .utils.engine_db import get_engine_db
 from sqlalchemy import text
-import sys
 
 
 @task
 def update_anterior():
     try:
-        engine = get_engine()
+        engine = get_engine_db()
 
         with engine.begin() as conn:
 
@@ -18,4 +17,7 @@ def update_anterior():
 
     except Exception as e:
         print('Error trying to update anterior: ', e)
-        sys.exit(1)
+        raise
+
+
+# TESTEAR ESTA RAMA

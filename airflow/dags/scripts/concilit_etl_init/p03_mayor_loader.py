@@ -1,12 +1,8 @@
 import os
-import sys
-
 import pandas as pd
-
 from airflow.decorators import task
-
 from ..p_update_status import update_status_carga_mayor
-from ..utils.engine_db import get_engine
+from ..utils.engine_db import get_engine_db
 
 
 @task
@@ -14,7 +10,8 @@ def load(file_name):
 
     try:
         update_status_carga_mayor(file_name, 'Cargando data en DB')
-        engine = get_engine()
+
+        engine = get_engine_db()
 
         full_path = os.path.join('/data/to_load/mayor', file_name + '.csv')
         df_mayor: pd.DataFrame = pd.read_csv(full_path)
@@ -54,14 +51,14 @@ def load(file_name):
     except FileNotFoundError as e:
         update_status_carga_mayor(file_name, 'Falló carga en DB - File cause')
         print(f'Error in the path -> {e}')
-        sys.exit(1)
+        raise
 
     except ValueError as e:
         update_status_carga_mayor(file_name, 'Falló carga en DB')
         print(f'Error in data -> {e}')
-        sys.exit(1)
+        raise
 
     except Exception as e:
         update_status_carga_mayor(file_name, 'Falló carga en DB')
         print('Error trying to validate original file: ', e)
-        sys.exit(1)
+        raise

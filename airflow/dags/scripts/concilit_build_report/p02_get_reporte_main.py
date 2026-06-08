@@ -1,7 +1,6 @@
 import os
-import sys
 
-from ..utils.engine_db import get_engine
+from ..utils.engine_db import get_engine_db
 from airflow.decorators import task
 import pandas as pd
 from sqlalchemy import text
@@ -22,7 +21,7 @@ def get_reporte_main(info_previa: dict):
             os.remove(path_result)
 
 
-        engine = get_engine()
+        engine = get_engine_db()
         query = """
         SELECT * FROM fn_previo_partidas_pendientes(:id_saldo_bancario)
         """
@@ -36,4 +35,4 @@ def get_reporte_main(info_previa: dict):
     except Exception as e:
         update_status_reporte_saldo_bancario(id_saldo_bancario, 'Falló build - Analizando partidas pendientes vía SQL')
         print(e)
-        sys.exit(1)
+        raise

@@ -1,5 +1,4 @@
 import os
-import sys
 import pandas as pd
 from airflow.decorators import task
 from ..p_update_status import update_status_carga_mayor
@@ -108,4 +107,4 @@ def trans(file_name, id_cuenta: str):
     except Exception as e:
         update_status_carga_mayor(file_name, 'Falló transformación')
         print('Error trying to transform file: ', e)
-        sys.exit(1)
+        raise
