@@ -1,17 +1,14 @@
 from sqlalchemy import text
-from .utils.engine_db import get_hook_sql
-
+from .utils.engine_db import get_engine_db
 
 
 def update_status_base(query: str, pars: dict):
     stmt = text(query)
-    hook_sql = get_hook_sql()
 
-    engine = hook_sql.get_sqlalchemy_engine()
+    engine = get_engine_db()
 
-    with engine.connect() as conn:
-        conn.execute(stmt, pars)
-        conn.commit()
+    with engine.begin() as db_conn:
+        db_conn.execute(stmt, pars)
 
 
 def update_status_carga_mayor(id_carga_mayor: str, new_status: str):
